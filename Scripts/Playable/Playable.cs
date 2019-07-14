@@ -37,7 +37,7 @@ namespace Assets.Scripts
         public event MilestoneEventHandler Undone;
 
         protected bool BeginningHasExternalListeners => Beginning.GetInvocationList().Count() > 0;
-        protected bool EndedHasExternalListeners => Beginning.GetInvocationList().Count() > 1;
+        protected bool EndedHasExternalListeners => (Beginning?.GetInvocationList()?.Count() ?? 0) > 1;
         protected void InvokeEnded()
         {
             Ended(this);

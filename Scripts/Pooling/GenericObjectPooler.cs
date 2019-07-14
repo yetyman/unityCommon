@@ -82,7 +82,11 @@ public class GenericObjectPooler : MonoBehaviour
 
     public GameObject GetOne(Transform newParent, Vector3 position, Quaternion rotation, bool global = false)
     {
-        var obj = PooledObjs.FirstOrDefault(x => !x.activeSelf);
+        return GetOne(newParent, position, rotation, null, global);
+    }
+    public GameObject GetOne(Transform newParent, Vector3 position, Quaternion rotation, Vector3? scale, bool global = false)
+    {
+            var obj = PooledObjs.FirstOrDefault(x => !x.activeSelf);
         if (obj == null && CountInUse < HardCap)
         {
             Debug.LogWarning($"Consider lowering the Iter Time or increasing Cap Increment on {PooledObj.name}'s object pooler. it is not pooling as fast as the demand.");
@@ -90,20 +94,20 @@ public class GenericObjectPooler : MonoBehaviour
         }
         if (obj != null)
         {
-            var scale = obj.transform.localScale;
+            scale = scale ?? obj.transform.localScale;
 
             if (global)
             {
                 obj.transform.localPosition = position;
                 obj.transform.localRotation = rotation;
-                obj.transform.localScale = scale;//this is for convenience but could change later.
+                obj.transform.localScale = scale.Value;//this is for convenience but could change later.
             }
             obj.transform.parent = newParent;
             if (!global)
             {
                 obj.transform.localPosition = position;
                 obj.transform.localRotation = rotation;
-                obj.transform.localScale = scale;//this is for convenience but could change later.
+                obj.transform.localScale = scale.Value;//this is for convenience but could change later.
             }
             obj.SetActive(true);
             if ((SoftCap - CountInUse) < MarginBeforeIncrement)

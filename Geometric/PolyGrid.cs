@@ -95,7 +95,9 @@ namespace Assets.CommonLibrary.Geometric
         }
         public PolyGridNode<T> GetNode(Vector3Int pos)
         {
-            return base[pos];
+            if (base.TryGetValue(pos, out PolyGridNode<T> retVal))
+                return retVal;
+            else return null;
         }
         public PolyGridNode<T> GetRandom()
         {

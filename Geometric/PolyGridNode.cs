@@ -47,6 +47,8 @@ namespace Assets.CommonLibrary.Geometric
         {
             return Grid.Adjacent(GridPos, direction);
         }
+
+
         public bool Has(Direction direction)
         {
             return Grid.Adjacent(GridPos, direction) != null;
