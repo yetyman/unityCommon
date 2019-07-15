@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class GenericObjectPooler : MonoBehaviour
 {
-    private static Dictionary<string, GenericObjectPooler> Pools = new Dictionary<string, GenericObjectPooler>();
+    public static Dictionary<string, GenericObjectPooler> Pools = new Dictionary<string, GenericObjectPooler>();
     public GameObject PooledObj;
     public int HardCap= 80;
     public int SoftCap = 20;

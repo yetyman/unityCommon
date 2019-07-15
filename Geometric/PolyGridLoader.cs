@@ -10,6 +10,7 @@ namespace Assets.CommonLibrary.Geometric
 {
     public class PolyGridLoader : MonoBehaviour
     {
+        public static Dictionary<string, PolyGrid<TileController>> Grids = new Dictionary<string, PolyGrid<TileController>>();
         public PolyGrid<TileController> Grid;
         public GenericObjectPooler TilePooler;
         public int DirCnt = 6;
@@ -22,6 +23,7 @@ namespace Assets.CommonLibrary.Geometric
         public Box Limits = new Box(Vector3.zero, Vector3.zero);
         private void OnDrawGizmos()
         {
+            
             //Gizmos.DrawCube(Limits.Min.Average(Limits.Max)+transform.localPosition, Limits.Delta);
             if (ScaleToBounds)
             {
@@ -82,10 +84,13 @@ namespace Assets.CommonLibrary.Geometric
         // Start is called before the first frame update
         void Start()
         {
+
             if (TilePooler != null)
             {
                 foreach (var node in CreateGrid())
                     Grid[node.Key] = GetPooledUnit(node.Value).GetComponent<TileController>();
+                Grids.Add(name, Grid);
+
             }
         }
 

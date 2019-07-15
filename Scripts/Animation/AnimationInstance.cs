@@ -59,7 +59,7 @@ namespace Assets.Scripts.Animation
         { get { return easingPattern; } }
 
         public bool EndedHasListeners => EndedHasExternalListeners;
-        public void InvokeEnded()
+        public new void InvokeEnded()
         {
             InvokeEnded();
         }

@@ -13,9 +13,15 @@ namespace Assets.CommonLibrary.Geometric
     {
         public float Angle;
         public int SequencePos;
+        public int SequenceSize;
         public Vector3 TransformOffset;
         public Vector3Int GridOffset;
         public float Distance;
+
+        public Direction AddRelative(Direction relative)
+        {
+            return Directions.AddRelative(this, relative);
+        }
         public static Vector3 operator +(Direction dir, Vector3 other)
         {
             return other + dir.TransformOffset;
@@ -45,6 +51,7 @@ namespace Assets.CommonLibrary.Geometric
         {
             return new Direction()
             {
+                SequenceSize = dir.SequenceSize,
                 Angle = dir.Angle,
                 Distance = dir.Distance / distance,
                 SequencePos = dir.SequencePos,
@@ -56,6 +63,7 @@ namespace Assets.CommonLibrary.Geometric
         {
             return new Direction()
             {
+                SequenceSize = dir.SequenceSize,
                 Angle = dir.Angle,
                 Distance = dir.Distance * scale.magnitude,
                 SequencePos = dir.SequencePos,
@@ -67,6 +75,7 @@ namespace Assets.CommonLibrary.Geometric
         {
             return new Direction()
             {
+                SequenceSize = dir.SequenceSize,
                 Angle = dir.Angle,//angle is ther for iteration not absolutes. don't multiply it.
                 Distance = dir.Distance,
                 SequencePos = dir.SequencePos,
@@ -81,6 +90,11 @@ namespace Assets.CommonLibrary.Geometric
     }
     public class Directions
     {
+        public static Direction AddRelative(Direction baseDirection, Direction relativeDirection)
+        {
+            return Poly.Dirs[baseDirection.SequenceSize][baseDirection.SequencePos + relativeDirection.SequencePos];
+        }
+
         public bool Supports(int dirCnt)
         {
             return Dirs.ContainsKey(dirCnt);
@@ -170,6 +184,7 @@ namespace Assets.CommonLibrary.Geometric
             foreach (Direction d in Dirs)
             {
                 var dir = new Direction();
+                dir.SequenceSize = Dirs.Count;
                 dir.Distance = cornerDistance;
                 dir.Angle = d.Angle + MinimumAngle / 2;
                 dir.TransformOffset = (shapeRotation * d.TransformOffset).normalized * dir.Distance;
@@ -258,11 +273,12 @@ namespace Assets.CommonLibrary.Geometric
 
             Dirs = new CircularList<Direction>
             {
-                new Direction(){ Angle = 0, SequencePos = 0, TransformOffset = new Vector3(0,1), GridOffset = new Vector3Int(0,1,0), Distance = 1 },
-                new Direction(){ Angle = 90, SequencePos = 1, TransformOffset = new Vector3(1,0), GridOffset = new Vector3Int(1,0,0), Distance = 1 },
-                new Direction(){ Angle = 180, SequencePos = 2, TransformOffset = new Vector3(0,-1), GridOffset = new Vector3Int(0,-1,0), Distance = 1 },
-                new Direction(){ Angle = 270, SequencePos = 3, TransformOffset = new Vector3(-1,0), GridOffset = new Vector3Int(-1,0,0), Distance = 1 },
+                new Direction(){ SequenceSize = 4, Angle = 0, SequencePos = 0, TransformOffset = new Vector3(0,1), GridOffset = new Vector3Int(0,1,0), Distance = 1 },
+                new Direction(){ SequenceSize = 4, Angle = 90, SequencePos = 1, TransformOffset = new Vector3(1,0), GridOffset = new Vector3Int(1,0,0), Distance = 1 },
+                new Direction(){ SequenceSize = 4, Angle = 180, SequencePos = 2, TransformOffset = new Vector3(0,-1), GridOffset = new Vector3Int(0,-1,0), Distance = 1 },
+                new Direction(){ SequenceSize = 4, Angle = 270, SequencePos = 3, TransformOffset = new Vector3(-1,0), GridOffset = new Vector3Int(-1,0,0), Distance = 1 },
             };
+            Dirs.ForEach(x => x.SequenceSize = Dirs.Count);
         }
 
         public Direction Up() => GetDirection(0);
@@ -288,15 +304,16 @@ namespace Assets.CommonLibrary.Geometric
 
             Dirs = new CircularList<Direction>
             {
-                new Direction(){ Angle = 0, SequencePos = 0, TransformOffset = new Vector3(0,1), GridOffset = new Vector3Int(0,1,0), Distance = 1 },
-                new Direction(){ Angle = 45, SequencePos = 1, TransformOffset = new Vector3(1,1), GridOffset = new Vector3Int(1,1,0), Distance = Mathf.Sqrt(2) },
-                new Direction(){ Angle = 90, SequencePos = 2, TransformOffset = new Vector3(1,0), GridOffset = new Vector3Int(1,0,0), Distance = 1 },
-                new Direction(){ Angle = 135, SequencePos = 3, TransformOffset = new Vector3(1,-1), GridOffset = new Vector3Int(1,-1,0), Distance = Mathf.Sqrt(2) },
-                new Direction(){ Angle = 180, SequencePos = 4, TransformOffset = new Vector3(0,-1), GridOffset = new Vector3Int(0,-1,0), Distance = 1 },
-                new Direction(){ Angle = 225, SequencePos = 5, TransformOffset = new Vector3(-1,-1), GridOffset = new Vector3Int(-1,-1,0), Distance = Mathf.Sqrt(2) },
-                new Direction(){ Angle = 270, SequencePos = 6, TransformOffset = new Vector3(-1,0), GridOffset = new Vector3Int(-1,0,0), Distance = 1 },
-                new Direction(){ Angle = 315, SequencePos = 7, TransformOffset = new Vector3(-1,1), GridOffset = new Vector3Int(-1,1,0), Distance = Mathf.Sqrt(2) },
+                new Direction(){ SequenceSize = 8, Angle = 0, SequencePos = 0, TransformOffset = new Vector3(0,1), GridOffset = new Vector3Int(0,1,0), Distance = 1 },
+                new Direction(){ SequenceSize = 8, Angle = 45, SequencePos = 1, TransformOffset = new Vector3(1,1), GridOffset = new Vector3Int(1,1,0), Distance = Mathf.Sqrt(2) },
+                new Direction(){ SequenceSize = 8, Angle = 90, SequencePos = 2, TransformOffset = new Vector3(1,0), GridOffset = new Vector3Int(1,0,0), Distance = 1 },
+                new Direction(){ SequenceSize = 8, Angle = 135, SequencePos = 3, TransformOffset = new Vector3(1,-1), GridOffset = new Vector3Int(1,-1,0), Distance = Mathf.Sqrt(2) },
+                new Direction(){ SequenceSize = 8, Angle = 180, SequencePos = 4, TransformOffset = new Vector3(0,-1), GridOffset = new Vector3Int(0,-1,0), Distance = 1 },
+                new Direction(){ SequenceSize = 8, Angle = 225, SequencePos = 5, TransformOffset = new Vector3(-1,-1), GridOffset = new Vector3Int(-1,-1,0), Distance = Mathf.Sqrt(2) },
+                new Direction(){ SequenceSize = 8, Angle = 270, SequencePos = 6, TransformOffset = new Vector3(-1,0), GridOffset = new Vector3Int(-1,0,0), Distance = 1 },
+                new Direction(){ SequenceSize = 8, Angle = 315, SequencePos = 7, TransformOffset = new Vector3(-1,1), GridOffset = new Vector3Int(-1,1,0), Distance = Mathf.Sqrt(2) },
             };
+            Dirs.ForEach(x => x.SequenceSize = Dirs.Count);
         }
 
         public Direction Up() => GetDirection(0);
@@ -327,13 +344,14 @@ namespace Assets.CommonLibrary.Geometric
             Dirs = new CircularList<Direction>
             {
                 //Grid Offset Note. while 0,.5,1 may feel more intuitive, 0,1,2 contributes greatly to even odd calculations making code much easier to write. i think this makes up for the lack of intuitiveness
-                new Direction(){ Angle = 0, SequencePos = 0, TransformOffset = new Vector3(0, 1), GridOffset = new Vector3Int(0,2,0), Distance = 1 },
-                new Direction(){ Angle = 60, SequencePos = 1, TransformOffset = new Vector3(Mathf.Sqrt(3)/2, .5f), GridOffset = new Vector3Int(1,1,0), Distance = 1},
-                new Direction(){ Angle = 120, SequencePos = 2, TransformOffset = new Vector3(Mathf.Sqrt(3)/2, -.5f), GridOffset = new Vector3Int(1,-1,0), Distance = 1 },
-                new Direction(){ Angle = 180, SequencePos = 3, TransformOffset = new Vector3(0, -1), GridOffset = new Vector3Int(0,-2,0), Distance = 1 },
-                new Direction(){ Angle = 240, SequencePos = 4, TransformOffset = new Vector3(-Mathf.Sqrt(3)/2, -.5f), GridOffset = new Vector3Int(-1,-1,0), Distance = 1 },
-                new Direction(){ Angle = 300, SequencePos = 5, TransformOffset = new Vector3(-Mathf.Sqrt(3)/2, .5f), GridOffset = new Vector3Int(-1, 1,0), Distance = 1 },
+                new Direction(){ SequenceSize = 6, Angle = 0, SequencePos = 0, TransformOffset = new Vector3(0, 1), GridOffset = new Vector3Int(0,2,0), Distance = 1 },
+                new Direction(){ SequenceSize = 6, Angle = 60, SequencePos = 1, TransformOffset = new Vector3(Mathf.Sqrt(3)/2, .5f), GridOffset = new Vector3Int(1,1,0), Distance = 1},
+                new Direction(){ SequenceSize = 6, Angle = 120, SequencePos = 2, TransformOffset = new Vector3(Mathf.Sqrt(3)/2, -.5f), GridOffset = new Vector3Int(1,-1,0), Distance = 1 },
+                new Direction(){ SequenceSize = 6, Angle = 180, SequencePos = 3, TransformOffset = new Vector3(0, -1), GridOffset = new Vector3Int(0,-2,0), Distance = 1 },
+                new Direction(){ SequenceSize = 6, Angle = 240, SequencePos = 4, TransformOffset = new Vector3(-Mathf.Sqrt(3)/2, -.5f), GridOffset = new Vector3Int(-1,-1,0), Distance = 1 },
+                new Direction(){ SequenceSize = 6, Angle = 300, SequencePos = 5, TransformOffset = new Vector3(-Mathf.Sqrt(3)/2, .5f), GridOffset = new Vector3Int(-1, 1,0), Distance = 1 },
             };
+            Dirs.ForEach(x => x.SequenceSize = Dirs.Count);
         }
 
         public Direction Up() => GetDirection(0);
@@ -359,9 +377,9 @@ namespace Assets.CommonLibrary.Geometric
             Dirs = new CircularList<Direction>
             {
                 //Grid Offset Note. while 0,.5,1 may feel more intuitive, 0,1,2 contributes greatly to even odd calculations making code much easier to write. i think this makes up for the lack of intuitiveness
-                new Direction(){ Angle = 0, SequencePos = 0, TransformOffset = new Vector3(0, 1), GridOffset = new Vector3Int(0,2,0), Distance = 1 },
-                new Direction(){ Angle = 120, SequencePos = 1, TransformOffset = new Vector3(Mathf.Sqrt(2), -.5f), GridOffset = new Vector3Int(2,-1,0), Distance = 1 },
-                new Direction(){ Angle = 240, SequencePos = 2, TransformOffset = new Vector3(-Mathf.Sqrt(2), -.5f), GridOffset = new Vector3Int(-2,-1,0), Distance = 1 },
+                new Direction(){ SequenceSize = 3, Angle = 0, SequencePos = 0, TransformOffset = new Vector3(0, 1), GridOffset = new Vector3Int(0,2,0), Distance = 1 },
+                new Direction(){ SequenceSize = 3, Angle = 120, SequencePos = 1, TransformOffset = new Vector3(Mathf.Sqrt(2), -.5f), GridOffset = new Vector3Int(2,-1,0), Distance = 1 },
+                new Direction(){ SequenceSize = 3, Angle = 240, SequencePos = 2, TransformOffset = new Vector3(-Mathf.Sqrt(2), -.5f), GridOffset = new Vector3Int(-2,-1,0), Distance = 1 },
             };
         }
 
