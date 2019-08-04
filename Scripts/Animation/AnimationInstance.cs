@@ -1,4 +1,4 @@
-﻿using Assets.GenericClasses;
+﻿using Assets.CommonLibrary.GenericClasses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -95,7 +95,12 @@ namespace Assets.Scripts.Animation
         public float SingleTween(float from, float to)
         {
             //This is definitely not an item for immediate consideration, but in the future you could pretty easily preprocess the calculations to make sure that the data is ready to be assigned as soon as the frame comes around.
-            float weight = SingleTween(PercentageCompleted.Value);
+            return SingleTween(from, to, EasingCurve.Value, EasingPattern.Value);
+        }
+        public float SingleTween(float from, float to, EasingCurves easingCurve, EasingPatterns easingPattern)
+        {
+            //This is definitely not an item for immediate consideration, but in the future you could pretty easily preprocess the calculations to make sure that the data is ready to be assigned as soon as the frame comes around.
+            float weight = SingleTween(PercentageCompleted.Value, easingCurve, easingPattern);
 
             return from * (1 - weight) + to * weight;
         }
@@ -355,8 +360,8 @@ namespace Assets.Scripts.Animation
         {
 
             var instance = GetActiveInstance();
-            if (this != instance)
-                Debug.LogWarning("Please cache animation instances used repeatedly");
+            //if (this != instance)
+            //    Debug.LogWarning("Please cache animation instances used repeatedly");
 
 
             if (!TimeSpanSeconds.HasValue)

@@ -1,5 +1,4 @@
 ﻿using Assets.CommonLibrary.GenericClasses;
-using Assets.GenericClasses;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,8 +9,7 @@ using UnityEngine;
 
 namespace Assets.CommonLibrary.Geometric
 {
-
-    public class PolyGrid<T> : Dictionary<Vector3Int, PolyGridNode<T>>
+    public class PolyGrid<T> : Dictionary<Vector3Int, PolyGridNode<T>>, IPolyGrid
     {
         public DirBase Directions;
         public static implicit operator PolyGrid<T>(T[,] yxGrid)
@@ -90,7 +88,8 @@ namespace Assets.CommonLibrary.Geometric
             return new Box(MinBounds, MaxBounds);
         }
 
-        public PolyGrid(int dirCnt){
+        public PolyGrid(int dirCnt)
+        {
             Directions = Poly.Dirs[dirCnt];
         }
         public PolyGridNode<T> GetNode(Vector3Int pos)

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Assets.GenericClasses
+namespace Assets.CommonLibrary.GenericClasses
 {
     public static class DictionaryExtensions
     {

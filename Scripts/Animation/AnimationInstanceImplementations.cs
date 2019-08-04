@@ -31,16 +31,24 @@ namespace Assets.Scripts.Animation
     /// <typeparam name="TTarget"></typeparam>
     public class AnimationInstanceVec3<TTarget> : AnimationInstanceS<TTarget, Vector3>
     {
+        public EasingCurves xCurve;
+        public EasingCurves yCurve;
+        public EasingCurves zCurve;
+        public EasingPatterns xPattern;
+        public EasingPatterns yPattern;
+        public EasingPatterns zPattern;
         public AnimationInstanceVec3(TTarget target, Action<TTarget, Vector3> setter, Func<TTarget, Vector3> getter, float timeSpanSeconds, EasingCurves easingCurve = EasingCurves.Linear, EasingPatterns easingPattern = EasingPatterns.In) : base(target, setter, getter, timeSpanSeconds, easingCurve, easingPattern)
         {
+            xCurve = yCurve = zCurve = easingCurve;
+            xPattern = yPattern = zPattern = easingPattern;
         }
 
         public override Vector3 Tween()
         {
             return new Vector3(
-                SingleTween(From.x, To.x),
-                SingleTween(From.y, To.y),
-                SingleTween(From.z, To.z));
+                SingleTween(From.x, To.x, xCurve, xPattern),
+                SingleTween(From.y, To.y, yCurve, yPattern),
+                SingleTween(From.z, To.z, zCurve, zPattern));
         }
     }
     public class AnimationInstanceVec2<TTarget> : AnimationInstanceS<TTarget, Vector2>

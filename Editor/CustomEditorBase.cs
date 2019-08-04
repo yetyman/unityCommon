@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEditorInternal;
 using System.Collections.Generic;
 using UnityEditor.AnimatedValues;
-using Assets.GenericClasses;
+using Assets.CommonLibrary.GenericClasses;
 using System.Linq;
 using Assets.CustomAttributes;
 
@@ -24,23 +24,66 @@ public class CustomEditorBase : Editor
         this.reorderableLists = null;
     }
 
+    Dictionary<SerializedObject, int> HorizontalGroups;
+
     public override void OnInspectorGUI()
     {
         //EditorGUILayout.LabelField("Custom Editor", EditorStyles.centeredGreyMiniLabel);
         Color cachedGuiColor = GUI.color;
         serializedObject.Update();
+
+        Stack<SerializedObject> activeGroups;
         var property = serializedObject.GetIterator();
         var next = property.NextVisible(true);
         if (next)
+        {
+
+            if (HorizontalGroups == null) {
+                HorizontalGroups = new Dictionary<SerializedObject, int>();
+
+                activeGroups = new Stack<SerializedObject>();
+                do
+                {
+
+                    if (activeGroups.Count > 0)
+                        HorizontalGroups[activeGroups.Peek()]++;
+
+                    if (GetPropertyAttributes(property)?.Any(x => x is BeginHorizontal) ?? false)
+                    {
+                        activeGroups.Push(property.serializedObject);
+                        HorizontalGroups.Add(property.serializedObject, 1);
+                    }
+
+                    if (GetPropertyAttributes(property)?.Any(x => x is EndHorizontal) ?? false)
+                    {
+                        activeGroups.Pop();
+                    }
+                } while (property.NextVisible(false));
+                property.Reset();
+            }
+
+            property.Reset();
+            property.NextVisible(true);
+
+            activeGroups = new Stack<SerializedObject>();
             do
             {
+                if (GetPropertyAttributes(property)?.Any(x => x is BeginHorizontal) ?? false)
+                    activeGroups.Push(property.serializedObject);
+
                 GUI.color = cachedGuiColor;
-                this.HandleProperty(property);
+                this.HandleProperty(property, activeGroups.Count > 0 ? activeGroups.Peek() : null);
+
+                if (GetPropertyAttributes(property)?.Any(x => x is EndHorizontal) ?? false)
+                    activeGroups.Pop();
+
             } while (property.NextVisible(false));
+
+        }
         serializedObject.ApplyModifiedProperties();
     }
 
-    protected void HandleProperty(SerializedProperty property)
+    protected void HandleProperty(SerializedProperty property, SerializedObject activeGroup)
     {
         //Debug.LogFormat("name: {0}, displayName: {1}, type: {2}, propertyType: {3}, path: {4}", property.name, property.displayName, property.type, property.propertyType, property.propertyPath);
         bool isdefaultScriptProperty = property.name.Equals("m_Script") && property.type.Equals("PPtr<MonoScript>") && property.propertyType == SerializedPropertyType.ObjectReference && property.propertyPath.Equals("m_Script");
@@ -56,19 +99,40 @@ public class CustomEditorBase : Editor
                 foreach (var attr in attrs)
                 {
                     if (attr is BeginHorizontal)
+                    {
                         EditorGUILayout.BeginHorizontal();
-                    if (attr is BeginVertical)
-                        EditorGUILayout.BeginVertical();
+                    }
+                    //if (attr is BeginVertical)
+                    //{
+                    //    EditorGUILayout.BeginVertical();
+                    //}
                 }
-            EditorGUILayout.PropertyField(property, property.isExpanded);
+
+            if (activeGroup != null)
+            {
+                EditorGUIUtility.fieldWidth /= HorizontalGroups[activeGroup];
+                EditorGUIUtility.labelWidth /= HorizontalGroups[activeGroup];
+                EditorGUILayout.PropertyField(property, property.isExpanded);
+                EditorGUIUtility.fieldWidth *= HorizontalGroups[activeGroup];
+                EditorGUIUtility.labelWidth *= HorizontalGroups[activeGroup];
+
+            }
+            else
+                EditorGUILayout.PropertyField(property, property.isExpanded);
+
 
             if (attrs != null)
                 foreach (var attr in attrs)
                 {
                     if (attr is EndHorizontal)
+                    {
                         EditorGUILayout.EndHorizontal();
-                    if (attr is EndVertical)
-                        EditorGUILayout.EndVertical();
+                        //EditorGUIUtility.fieldWidth *= HorizontalGroups[activeGroup];
+                    }
+                    //if (attr is EndVertical)
+                    //{
+                    //    EditorGUILayout.EndVertical();
+                    //}
                 }
         }
         if (isdefaultScriptProperty)

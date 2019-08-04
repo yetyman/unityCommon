@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Assets.GenericClasses
+namespace Assets.CommonLibrary.GenericClasses
 {
     public static class ColorExtensions
     {

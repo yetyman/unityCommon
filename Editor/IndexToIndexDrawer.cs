@@ -28,7 +28,7 @@ sealed class IndexToIndexDrawer : PropertyDrawer
 
         string[] variableName = property.propertyPath.Split('.');
         SerializedProperty p = property.serializedObject.FindProperty(variableName[0]);
-        if (!p.isArray)
+        if (!p.isArray)//TODO:abstract this array logic to a ListablePropertyDrawer class
         {
             var singleTarget = fieldInfo.GetValue(targetWrapper) as IndexToIndex;
             position = EditorGUI.PrefixLabel(position, new GUIContent(property.displayName));

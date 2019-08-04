@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Assets.GenericClasses
+namespace Assets.CommonLibrary.GenericClasses
 {
     [Serializable]
     public class Vec3 : SNullable<Vector3>

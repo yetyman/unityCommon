@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Assets.GenericClasses
+namespace Assets.CommonLibrary.GenericClasses
 {
     [Serializable]
     public class EventedList<T> : List<T>

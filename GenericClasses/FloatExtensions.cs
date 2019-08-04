@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Assets.GenericClasses
+namespace Assets.CommonLibrary.GenericClasses
 {
     public static class FloatExtensions
     {

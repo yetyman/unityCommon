@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.Maps;
+﻿using Assets.CommonLibrary.GenericClasses;
+using Assets.Scripts.Maps;
 using Assets.Scripts.TextBox;
 using System;
 using System.Collections;
@@ -11,7 +12,6 @@ using UnityEngine;
 [Serializable] public class ObjectDictionary : SerializableDictionary<string, object> { };
 [Serializable] public class UITextDictionary : SerializableDictionary<string, UITextElement> { };
 [Serializable] public class IndexToIndexDictionary : SerializableDictionary<int, int> { };
-
 [Serializable]
 public static class GameSceneContext {
     public static ObjectDictionary OtherItems = new ObjectDictionary();

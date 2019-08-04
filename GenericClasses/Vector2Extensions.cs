@@ -7,7 +7,7 @@ using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using UnityEngine;
 
-namespace Assets.GenericClasses
+namespace Assets.CommonLibrary.GenericClasses
 {
     public static class Vector2Extensions
     {

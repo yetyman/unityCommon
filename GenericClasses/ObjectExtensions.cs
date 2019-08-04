@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace Assets.GenericClasses
+namespace Assets.CommonLibrary.GenericClasses
 {
-	public static class ObjectExtensions
+    public static class ObjectExtensions
     {
 
         public static T Get<T>(this T[,] array, Vector2Int position, T defaultValue = default(T))

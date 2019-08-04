@@ -1,5 +1,4 @@
 ﻿using Assets.CommonLibrary.GenericClasses;
-using Assets.GenericClasses;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,9 +9,9 @@ namespace Assets.CommonLibrary.Geometric
 {
     public class PolyGridLoader : MonoBehaviour
     {
-        public static Dictionary<string, PolyGrid<TileController>> Grids = new Dictionary<string, PolyGrid<TileController>>();
+        //public static Dictionary<string, PolyGrid<TileController>> Grids = new Dictionary<string, PolyGrid<TileController>>();
         public PolyGrid<TileController> Grid;
-        public GenericObjectPooler TilePooler;
+        public SelectPool TilePooler;
         public int DirCnt = 6;
 
         public bool ScaleToBounds;
@@ -21,7 +20,7 @@ namespace Assets.CommonLibrary.Geometric
 
         //public IPolygon Limits = new Box(Vector3.zero, Vector3.zero);
         public Box Limits = new Box(Vector3.zero, Vector3.zero);
-        private void OnDrawGizmos()
+        protected void OnDrawGizmos()
         {
             
             //Gizmos.DrawCube(Limits.Min.Average(Limits.Max)+transform.localPosition, Limits.Delta);
@@ -52,7 +51,7 @@ namespace Assets.CommonLibrary.Geometric
                 if (Poly.Dirs.Supports(DirCnt))
                 {
                     Grid = new PolyGrid<TileController>(DirCnt);
-
+                    PolyGridSelector.Instance.PolyGrids.Add(new PolyGridInfo() { name = name, PolyGrid = Grid });
                     Grid.Add(new Vector3Int(0, 0, 0), (TileController)null);
 
                     CreateNodes(Grid.GetNode(Vector3Int.zero));
@@ -79,17 +78,17 @@ namespace Assets.CommonLibrary.Geometric
 
         public virtual GameObject GetPooledUnit(PolyGridNode<TileController> node)
         {
-            return TilePooler.GetOne(transform, node.LocalPos, Quaternion.identity);
+            return TilePooler.GetPool().GetOne(transform, node.LocalPos, Quaternion.identity);
         }
         // Start is called before the first frame update
-        void Start()
+        protected void Start()
         {
 
             if (TilePooler != null)
             {
                 foreach (var node in CreateGrid())
                     Grid[node.Key] = GetPooledUnit(node.Value).GetComponent<TileController>();
-                Grids.Add(name, Grid);
+                PolyGridSelector.Instance.PolyGrids.Add(new PolyGridInfo() { name = name, PolyGrid = Grid });
 
             }
         }

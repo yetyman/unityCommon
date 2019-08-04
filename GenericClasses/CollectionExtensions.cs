@@ -14,5 +14,39 @@ namespace Assets.CommonLibrary.GenericClasses
             list.AddRange(enumerable);
             return list;
         }
+        public static bool SafeAdd<TValue>(this ICollection<TValue> collection, TValue value)
+        {
+            if (!collection.Contains(value))
+            {
+                collection.Add(value);
+                return true;
+            }
+            return false;
+        }
+        public static bool SafeSet<TValue>(this ICollection<TValue> collection, TValue value)
+        {
+            if (collection.Contains(value))
+            {
+                collection.Remove(value);
+                collection.Add(value);
+                return false;
+            }
+            else
+            {
+                collection.Add(value);
+                return true;
+            }
+        }
+
+        public static T Random<T>(this ICollection<T> collection)
+        {
+            var random = UnityEngine.Random.Range(0, collection.Count());
+            return collection.Skip(random).First();
+        }
+        public static T Random<T>(this IEnumerable<T> collection)
+        {
+            var random = UnityEngine.Random.Range(0, collection.Count());
+            return collection.Skip(random).First();
+        }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Assets.GenericClasses;
+﻿using Assets.CommonLibrary.GenericClasses;
 using Assets.Scripts.Animation;
 using Assets.Scripts.StateMachines;
 using System;

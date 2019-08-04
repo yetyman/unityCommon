@@ -1,4 +1,4 @@
-﻿using Assets.GenericClasses;
+﻿using Assets.CommonLibrary.GenericClasses;
 using System;
 using System.Collections.Generic;
 using System.Linq;

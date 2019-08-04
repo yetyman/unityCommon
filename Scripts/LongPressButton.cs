@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Assets.CommonLibrary.GenericClasses;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;

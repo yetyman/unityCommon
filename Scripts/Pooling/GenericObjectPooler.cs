@@ -1,13 +1,20 @@
-﻿using System.Collections;
+﻿using Assets;
+using Assets.CommonLibrary.GenericClasses;
+using Assets.CustomAttributes;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 public class GenericObjectPooler : MonoBehaviour
 {
-    public static Dictionary<string, GenericObjectPooler> Pools = new Dictionary<string, GenericObjectPooler>();
-    public GameObject PooledObj;
-    public int HardCap= 80;
+    public PoolSelector Pools => PoolSelector.Instance;
+
+    public SelectPrefab SelectPrefab;
+    [BeginHorizontal]
+    public bool Unlimited;
+    [EndHorizontal]
+    public int HardCap = 80;
     public int SoftCap = 20;
     public int CountInUse
     {
@@ -36,35 +43,51 @@ public class GenericObjectPooler : MonoBehaviour
     protected void Start()
     {
 
-        if (PooledObj == null)
+        Pools.Pools.SafeSet(new PoolInfo()
+        {
+            Pool = this,
+            name = SelectPrefab.GetPrefab().name
+        });
+        if (SelectPrefab.GetPrefab() == null)
             Debug.LogWarning("you must provide an object to be pooled, if not this script will do nothing");
         else
         {
             StartPooling();
-            Pools.Add(PooledObj.name, this);
+            
         }
     }
 
     IEnumerator Pool()
     {
-        while (transform.childCount < HardCap && SoftCap < HardCap)
+        while (PooledObjs.Count < SoftCap)
         {
-            if ((SoftCap - CountInUse) < MarginBeforeIncrement)
-                SoftCap += CapIncrement;
-            if (SoftCap > HardCap) SoftCap = HardCap;
-            if (PooledObjs.Count() < SoftCap)
-            {
-                OnInstantiate(MakeOne());
-            }
-            else break;
+            if(PoolOne() == null)
+                break;
 
             if (IterTime>0)
                 yield return new WaitForSeconds(IterTime);
         }
     }
+    private GameObject PoolOne()
+    {
+        GameObject obj = null;
+        if (Unlimited || PooledObjs.Count < HardCap)
+        {
+            if ((SoftCap - CountInUse) < MarginBeforeIncrement)
+                SoftCap += CapIncrement;
+            if (!Unlimited)
+                if (SoftCap > HardCap)
+                    SoftCap = HardCap;
+            if (PooledObjs.Count < SoftCap)
+            {
+                OnInstantiate(obj = MakeOne());
+            }
+        }
+        return obj;
+    }
     protected virtual GameObject FindNext()
     {
-        return PooledObj;
+        return SelectPrefab.GetPrefab();
     }
     private GameObject MakeOne()
     {
@@ -86,11 +109,12 @@ public class GenericObjectPooler : MonoBehaviour
     }
     public GameObject GetOne(Transform newParent, Vector3 position, Quaternion rotation, Vector3? scale, bool global = false)
     {
-            var obj = PooledObjs.FirstOrDefault(x => !x.activeSelf);
-        if (obj == null && CountInUse < HardCap)
+        var obj = PooledObjs.FirstOrDefault(x => !x.activeSelf);
+        if (obj == null && (CountInUse < HardCap || Unlimited))
         {
-            Debug.LogWarning($"Consider lowering the Iter Time or increasing Cap Increment on {PooledObj.name}'s object pooler. it is not pooling as fast as the demand.");
-            obj = MakeOne();
+            if(IterTime!=0)
+                Debug.LogWarning($"Consider lowering the Iter Time or increasing Cap Increment on {SelectPrefab.GetPrefab().name}'s object pooler. it is not pooling as fast as the demand.");
+            obj = PoolOne();
         }
         if (obj != null)
         {
@@ -110,8 +134,8 @@ public class GenericObjectPooler : MonoBehaviour
                 obj.transform.localScale = scale.Value;//this is for convenience but could change later.
             }
             obj.SetActive(true);
-            if ((SoftCap - CountInUse) < MarginBeforeIncrement)
-                StartPooling();
+
+            StartPooling();
         }
         return obj;
     }
@@ -121,8 +145,8 @@ public class GenericObjectPooler : MonoBehaviour
         for(int i = 0; i < count; i++)
         {
             var obj = PooledObjs.FirstOrDefault(x => !x.activeSelf);
-            if (obj == null && PooledObjs.Count() < HardCap)
-                obj = MakeOne();
+            if (obj == null && (PooledObjs.Count() < HardCap || Unlimited))
+                obj = PoolOne();
             if (obj != null)
             {
                 obj.transform.parent = newParent;
