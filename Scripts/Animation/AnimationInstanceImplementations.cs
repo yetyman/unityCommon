@@ -98,5 +98,16 @@ namespace Assets.Scripts.Animation
             return To.Substring(0, Mathf.RoundToInt(len * To.Length));
         }
     }
+    public class AnimationInstanceColor<TTarget> : AnimationInstanceS<TTarget, Color>
+    {
+        public AnimationInstanceColor(TTarget target, Action<TTarget, Color> setter, Func<TTarget, Color> getter, float timeSpanSeconds, EasingCurves easingCurve = EasingCurves.Linear, EasingPatterns easingPattern = EasingPatterns.In) : base(target, setter, getter, timeSpanSeconds, easingCurve, easingPattern)
+        {
+        }
+        //TODO: add AnimationInstance Constructor with option to send in tween function. could make for a much smoother implementation for any reasonably simple usage
+        public override Color Tween()
+        {
+            return Color.Lerp(from, to, SingleTween(PercentageCompleted.Value));
+        }
+    }
 
 }

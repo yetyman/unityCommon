@@ -11,7 +11,7 @@ namespace Assets.CommonLibrary.Geometric
     {
         //public static Dictionary<string, PolyGrid<TileController>> Grids = new Dictionary<string, PolyGrid<TileController>>();
         public PolyGrid<TileController> Grid;
-        public SelectPool TilePooler;
+        public PrefabFactory TilePooler;
         public int DirCnt = 6;
 
         public bool ScaleToBounds;
@@ -78,7 +78,7 @@ namespace Assets.CommonLibrary.Geometric
 
         public virtual GameObject GetPooledUnit(PolyGridNode<TileController> node)
         {
-            return TilePooler.GetPool().GetOne(transform, node.LocalPos, Quaternion.identity);
+            return TilePooler.GetOne(null, transform, node.LocalPos, Quaternion.identity);
         }
         // Start is called before the first frame update
         protected void Start()

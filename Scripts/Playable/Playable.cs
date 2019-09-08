@@ -36,6 +36,15 @@ namespace Assets.Scripts
         public event MilestoneEventHandler Cancelled; 
         public event MilestoneEventHandler Undone;
 
+        public void ClearEvents()
+        {
+            TimeSpanChanged = null;
+            Created = null;
+            Beginning = null;
+            Ended = null;
+            Cancelled = null;
+            Undone = null;
+        }
         protected bool BeginningHasExternalListeners => Beginning.GetInvocationList().Count() > 0;
         protected bool EndedHasExternalListeners => (Beginning?.GetInvocationList()?.Count() ?? 0) > 1;
         protected void InvokeEnded()
@@ -159,7 +168,7 @@ namespace Assets.Scripts
         protected IEnumerator AsyncDelegateInvoker(MilestoneEventHandler milestoneEventHandler)
         {
             yield return new WaitForSeconds(0);
-            milestoneEventHandler.Invoke(this);
+            milestoneEventHandler?.Invoke(this);
         }
         protected void AsyncDelegateInvoke(MilestoneEventHandler milestoneEventHandler)
         {

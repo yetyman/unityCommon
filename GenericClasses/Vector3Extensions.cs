@@ -8,6 +8,18 @@ namespace Assets.CommonLibrary.GenericClasses
 {
     public static class Vector3Extensions
     {
+        public static Vector3 Take(this Vector3 target, bool x, bool y, bool z)
+        {
+            return new Vector3(x ? target.x : 0, y ? target.y : 0, z ? target.z : 0);
+        }
+        public static Vector3 Mix(this Vector3 target, Vector3 other, bool x, bool y, bool z)
+        {
+            return new Vector3(x ? target.x : other.x, y ? target.y : other.y, z ? target.z : other.z);
+        }
+        public static Vector3 Add(this Vector3 target, float x, float y, float z)
+        {
+            return new Vector3(target.x +x,target.y +y, target.z +z);
+        }
         public static Vector3 Multiply(this Vector3 target, Vector3 other)
         {
             return new Vector3(target.x * other.x, target.y * other.y, target.z * other.z);

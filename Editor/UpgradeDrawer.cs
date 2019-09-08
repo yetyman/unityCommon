@@ -30,7 +30,20 @@ sealed class UpgradeDrawer : PropertyDrawer
             position.height = GetLineHeight(1);
 
             property.NextVisible(true);
+
+            var width = position.width;
+            var costwidth = 40;
+
+            position.width -= costwidth;
             listTarget.Name = EditorGUI.TextField(position, listTarget.Name);
+
+
+            position.x += position.width;
+            position.width = costwidth;
+            listTarget.BaseCost = EditorGUI.FloatField(position, listTarget.BaseCost);
+            position.width = width;
+            position.x -= position.width - costwidth;
+
             position.yMin += position.height;
             position.height = val - position.height;
             EditorGUI.PropertyField(position, property);
@@ -45,10 +58,23 @@ sealed class UpgradeDrawer : PropertyDrawer
             var listTarget = fieldInfo.GetValue(targetWrapper) as List<Upgrade>;
             float height = GetPropertyHeight(property, label);
 
+            var width = position.width;
+            var costwidth = 40;
+
             var val = position.height;
             position.height = GetLineHeight(1);
+            position.width -= costwidth;
             EditorGUI.indentLevel = 0;
             listTarget[index].Name = EditorGUI.TextField(position, listTarget[index].Name);
+
+
+            position.x += position.width;
+            position.width = costwidth;
+            listTarget[index].BaseCost = EditorGUI.FloatField(position, listTarget[index].BaseCost);
+            position.width = width;
+            position.x -= position.width - costwidth;
+
+
             position.yMin += position.height;
             position.height = val - position.height;
             property.NextVisible(true);

@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Assets
 {
-    public class UniqueObjectPooler : MonoBehaviour
+    public class UniqueObjectPooler : AObjectPooler
     {
         [SerializeField]
         List<GameObject> Items = new List<GameObject>();
@@ -16,12 +16,12 @@ namespace Assets
 
         public static Dictionary<string, UniqueObjectPooler> Pools = new Dictionary<string, UniqueObjectPooler>();
 
-        public List<string> Available()
+        public List<string> AvailablePrefabs()
         {
             //TODO: for some reason this does not work correctly
             return InstantiatedItems.Where(x => !x.activeSelf).Select(x => x.name).ToList();
         }
-        public List<string> All()
+        public List<string> AllPrefabs()
         {
             //TODO: for some reason this does not work correctly
             return Items.Select(x => x.name).ToList();
@@ -56,7 +56,7 @@ namespace Assets
 
         private GameObject MakeOne(GameObject nextFab)
         {
-            if (!InstantiatedItems.Any(x=> x.name == (nextFab.name+"(Clone)")))
+            if (!InstantiatedItems.Any(x => x.name == (nextFab.name + "(Clone)")))
             {
                 var obj = Instantiate(nextFab, transform);
                 InstantiatedItems.Add(obj);
@@ -65,15 +65,15 @@ namespace Assets
             }
             else return null;
         }
-        public void Reclaim(GameObject obj)
+        public override void Reclaim(GameObject obj)
         {
             obj.SetActive(false);
             obj.transform.parent = transform;
         }
 
-        public GameObject GetOne(string name, Transform newParent, Vector3? position = null, Quaternion? rotation = null, Vector3? scale = null, bool global = false)
+        public override GameObject GetOne(string name, Transform newParent, Vector3? position = null, Quaternion? rotation = null, Vector3? scale = null, bool global = false)
         {
-            GameObject obj = InstantiatedItems.FirstOrDefault(x=>x.name == (name + "(Clone)"));
+            GameObject obj = InstantiatedItems.FirstOrDefault(x => x.name == (name + "(Clone)"));
             obj = obj ?? MakeOne(Items.First(x => x.name == name));
 
             if (obj != null)
@@ -94,6 +94,18 @@ namespace Assets
                 obj.SetActive(true);
             }
             return obj;
+        }
+
+        public override GameObject GetUninstantiated(string name = null)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                throw new Exception("You must specify a specific object for unique object pools");
+            return Items.FirstOrDefault(x => x.name == name);
+        }
+
+        public override bool CanGet(GameObject viewPrefab)
+        {
+            return Items.Any(x => x == viewPrefab);
         }
     }
 }

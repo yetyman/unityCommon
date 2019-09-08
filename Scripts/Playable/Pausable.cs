@@ -23,7 +23,13 @@ namespace Assets.Scripts
         public MilestoneEventHandler Slowing { get; set; }
         public MilestoneEventHandler Resuming { get; set; }
 
-
+        public new void ClearEvents()
+        {
+            base.ClearEvents();
+            Resuming = null;
+            Pausing = null;
+            Slowing = null;
+        }
         public Pausable()
         {
             AllOfEm.Add(this);
