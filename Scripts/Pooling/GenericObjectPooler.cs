@@ -46,8 +46,7 @@ namespace Assets
         // Start is called before the first frame update
         protected void Start()
         {
-
-            Pools.Pools.SafeSet<string, GenericObjectPooler>(SelectPrefab.GetPrefab().name.ToLower(), this);
+            Pools.Pools.SafeSet(GetPoolName(), this);
 
             if (SelectPrefab.GetPrefab() == null)
                 Debug.LogWarning("you must provide an object to be pooled, if not this script will do nothing");
@@ -55,6 +54,13 @@ namespace Assets
             {
                 StartPooling();
             }
+        }
+
+        public string GetPoolName()
+        {
+            if (!string.IsNullOrWhiteSpace(SelectPrefab.PrefabName))
+                return SelectPrefab.PrefabName.ToLower();
+            else return SelectPrefab.GetPrefab().name.ToLower();
         }
 
         IEnumerator Pool()

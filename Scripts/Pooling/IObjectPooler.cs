@@ -17,6 +17,7 @@ namespace Assets
         public abstract void Reclaim(GameObject obj);
 
         public abstract bool CanGet(GameObject viewPrefab);
+
     }
     //public interface AObjectPooler
     //{

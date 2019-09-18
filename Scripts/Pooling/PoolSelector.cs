@@ -18,32 +18,12 @@ public class PoolSelector : SingletonScriptableObject<PoolSelector>
     public GenericObjectPooler this[string name]{
         get { return GetPool(name); }
     }
-    public GenericObjectPooler GetPool(string name)
+    public GenericObjectPooler GetPool(string name, bool allowContaining = true)
     {
-        return Pools.SafeGet(name.ToLower());
+        var val = Pools.SafeGet(name.ToLower());
+        if (val == null && !string.IsNullOrWhiteSpace(name) && allowContaining)
+            val = Pools.FirstOrDefault(x => x.Key.Contains(name.ToLower())).Value;
+        return val;
     }
 }
-//[Serializable]
-//public class PrefabFactory
-//{
-//    public string PoolName;
-//    public PoolSelector Selector => PoolSelector.Instance;
-//    public GenericObjectPooler CachedPool;
-//    public GenericObjectPooler GetPool()
-//    {
-//        if (CachedPool == null)
-//            CachedPool = Selector.GetPool(PoolName);
-//        return CachedPool;
-//    }
-
-//    /// <summary>
-//    /// 
-//    /// </summary>
-//    /// <param name="category">matching tags will be in the same category</param>
-//    /// <returns></returns>
-//    public GenericObjectPooler GetRandomPool(string category = "")
-//    {
-//        return Selector.Pools.Where(x => x.Value.tag.Contains(category)).Random().Value;
-//    }
-//}
 

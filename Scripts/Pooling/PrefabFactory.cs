@@ -1,4 +1,5 @@
-﻿using Assets.CommonLibrary.GenericClasses;
+﻿using Assets.CommonLibrary;
+using Assets.CommonLibrary.GenericClasses;
 using System;
 using System.Linq;
 using UnityEngine;
@@ -6,11 +7,13 @@ using UnityEngine;
 namespace Assets
 {
     [Serializable]
-    public class PrefabFactory
+    public class PrefabFactory //: ISerializationCallbackReceiver
     {
         //add enum for which way to get it and make it a radio button on the editor so that things can be pretty, will change the two function's logic btw
         public string PrefabName;
 
+        //[SerializeField, HideInInspector]
+        //private SerializedData data;
         [SerializeField]
         private AObjectPooler prefabPool;
         public GameObject Prefab;
@@ -87,9 +90,23 @@ namespace Assets
                 throw new Exception("you forgot to assign values to this Prefab Factory");
         }
 
-        internal AObjectPooler GetRandomPool(string v)
+        internal static AObjectPooler GetRandomPool(string v)
         {
             return PoolSelector.Instance.Pools.Where(x => string.IsNullOrWhiteSpace(v) || x.Key.ToLower().Contains(v.ToLower())).Random().Value;
         }
+
+        //public void OnBeforeSerialize()
+        //{
+        //    if (prefabPool == null)
+        //        return;
+        //    data = SerializedData.Serialize(prefabPool);
+        //}
+
+        //public void OnAfterDeserialize()
+        //{
+        //    if (data == null || data.type == null)
+        //        return;
+        //    prefabPool = (AObjectPooler)SerializedData.Deserialize(data);
+        //}
     }
 }
