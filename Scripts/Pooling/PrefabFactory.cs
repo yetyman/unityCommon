@@ -40,7 +40,10 @@ namespace Assets
             else
                 throw new Exception("you forgot to assign values to this Prefab Factory");
         }
-
+        internal bool IsSet()
+        {
+            return PrefabPool == null && Prefab == null;
+        }
         internal bool CanGet(GameObject viewPrefab)
         {
             if (PrefabPool != null)
